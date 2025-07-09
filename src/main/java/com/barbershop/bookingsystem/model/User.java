@@ -16,6 +16,8 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private String telefono;
+    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
     private Role role;
