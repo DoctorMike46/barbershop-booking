@@ -1,9 +1,11 @@
 package com.barbershop.bookingsystem.service;
 
+import com.barbershop.bookingsystem.model.Role;
 import com.barbershop.bookingsystem.model.User;
 import com.barbershop.bookingsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,11 @@ public class UserService {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    public List<User> findByRole() {
+        return userRepository.findByRole((Role.USER));
+    }
+
 
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);

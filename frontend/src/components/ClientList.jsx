@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaEye, FaEdit, FaTrash, FaTimes, FaUserSlash, FaUserCheck } from 'react-icons/fa';
+import {FaEye, FaEdit, FaTrash, FaTimes, FaUserSlash, FaUserCheck, FaPlus} from 'react-icons/fa';
 
 const ClientList = () => {
     const [clienti, setClienti] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedClient, setSelectedClient] = useState(null);
     const [popupType, setPopupType] = useState('');
-    const [formData, setFormData] = useState({ name: '', email: '', telefono: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', telefono: '' , password: '' , role: 'USER'});
 
     useEffect(() => {
         fetchClienti();
@@ -16,7 +16,7 @@ const ClientList = () => {
     const fetchClienti = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:8080/api/users', {
+            const res = await axios.get('http://localhost:8080/api/users/role-USER', {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setClienti(res.data);
@@ -32,13 +32,19 @@ const ClientList = () => {
 
     const handleModifica = (cliente) => {
         setSelectedClient(cliente);
-        setFormData({ name: cliente.name, email: cliente.email, telefono: cliente.telefono });
+        setFormData({ name: cliente.name, email: cliente.email, telefono: cliente.telefono, role: cliente.role });
         setPopupType('modifica');
     };
 
     const handleElimina = (cliente) => {
         setSelectedClient(cliente);
         setPopupType('elimina');
+    };
+
+    const handleNuovo = () => {
+        setFormData({ name: '', email: '', telefono: '', password: '', role: 'USER' });
+        setPopupType('nuovo');
+
     };
 
     const closePopup = () => {
@@ -64,6 +70,20 @@ const ClientList = () => {
         }
     };
 
+    const handleCreate = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post('http://localhost:8080/api/auth/register', formData, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            fetchClienti();
+            closePopup();
+        } catch (error) {
+            console.error('Errore durante la creazione del cliente:', error);
+        }
+    };
+
+
     const handleToggleActive = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -85,7 +105,12 @@ const ClientList = () => {
 
     return (
         <div className="px-8 pt-6 text-white min-h-screen">
-            <h1 className="text-3xl font-bold mb-6">Gestione Clienti</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Gestione Clienti</h1>
+                <button onClick={handleNuovo} className="flex items-center gap-2 bg-blue-900 hover:bg-blue-950 px-4 py-2 rounded">
+                    <FaPlus /> Nuovo Cliente
+                </button>
+            </div>
 
             <input
                 type="text"
@@ -119,7 +144,7 @@ const ClientList = () => {
                 ))}
             </div>
 
-            {popupType && selectedClient && (
+            {popupType  && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                     <div className="relative bg-gray-900 text-white p-6 rounded-lg shadow-lg w-full max-w-md">
                         <button className="absolute top-2 right-2 text-white text-xl" onClick={closePopup}>
@@ -133,17 +158,28 @@ const ClientList = () => {
                             </>
                         )}
 
-                        {popupType === 'modifica' && (
+                        {(popupType === 'modifica' || popupType === 'nuovo') && (
                             <>
-                                <h2 className="text-2xl font-semibold mb-4">Modifica Cliente</h2>
+                                <h2 className="text-2xl font-semibold mb-4">{popupType === 'nuovo' ? 'Nuovo Cliente' : 'Modifica Cliente'}</h2>
                                 <form className="space-y-3">
-                                    <input name="name" onChange={handleFormChange} value={formData.name} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <input name="email" onChange={handleFormChange} value={formData.email} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <input name="telefono" onChange={handleFormChange} value={formData.telefono} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <button type="button" onClick={handleSave} className="w-full py-2 bg-blue-500 rounded hover:bg-blue-600">Salva</button>
-                                    <button type="button" onClick={handleToggleActive} className="w-full py-2 mt-2 rounded hover:bg-gray-700 bg-gray-600">
-                                        {selectedClient.active ? <><FaUserSlash className="inline" /> Disabilita</> : <><FaUserCheck className="inline" /> Abilita</>}
+                                    <input name="name" placeholder="Nome e Cognome" onChange={handleFormChange} value={formData.name} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
+                                    <input name="email" placeholder="Email" onChange={handleFormChange} value={formData.email} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
+                                    <input name="telefono" placeholder="Telefono" onChange={handleFormChange} value={formData.telefono} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
+                                    {popupType === 'nuovo' && (
+                                        <input name="password" placeholder="Password" type="password" onChange={handleFormChange} value={formData.password} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={popupType === 'nuovo' ? handleCreate : handleSave}
+                                        className="w-full py-2 bg-blue-500 rounded hover:bg-blue-600"
+                                    >
+                                        Salva
                                     </button>
+                                    {popupType === 'modifica' && (
+                                        <button type="button" onClick={handleToggleActive} className="w-full py-2 mt-2 rounded hover:bg-gray-700 bg-gray-600">
+                                            {selectedClient.active ? <><FaUserSlash className="inline" /> Disabilita</> : <><FaUserCheck className="inline" /> Abilita</>}
+                                        </button>
+                                    )}
                                 </form>
                             </>
                         )}

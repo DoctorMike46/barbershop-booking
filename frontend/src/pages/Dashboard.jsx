@@ -3,6 +3,10 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { getUserRoleFromToken } from '../utils/auth';
 import ClientList from "../components/ClientList";
+import ServiceList from "../components/ServiceList";
+import WorkingHours from "../components/WorkingHours";
+
+
 
 const Dashboard = () => {
     const role = getUserRoleFromToken();
@@ -30,6 +34,9 @@ const Dashboard = () => {
                 )}
 
                 {section === 'clienti' && <ClientList />}
+                {section === 'servizi' && <ServiceList />}
+                {section === 'orario' && <WorkingHours />}
+
             </div>
         </div>
     );

@@ -9,7 +9,8 @@ const Register = () => {
         name: '',
         email: '',
         password: '',
-        role: 'USER' // oppure 'ADMIN' se vuoi permettere la selezione
+        telefono: '',
+        role: 'USER'
     });
 
     const [error, setError] = useState('');
@@ -44,12 +45,12 @@ const Register = () => {
 
                 <form onSubmit={handleRegister} className="space-y-5">
                     <div>
-                        <label className="block text-white text-sm mb-1">Nome</label>
+                        <label className="block text-white text-sm mb-1">Nome e Cognome</label>
                         <input
                             type="text"
                             name="name"
                             className="w-full p-2 rounded bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/30"
-                            placeholder="Mario Rossi"
+                            placeholder=""
                             value={form.name}
                             onChange={handleChange}
                             required
@@ -77,6 +78,19 @@ const Register = () => {
                             className="w-full p-2 rounded bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/30"
                             placeholder="••••••••"
                             value={form.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-white text-sm mb-1">Telefono</label>
+                        <input
+                            type="text"
+                            name="telefono"
+                            className="w-full p-2 rounded bg-white/10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white/30"
+                            placeholder=""
+                            value={form.telefono}
                             onChange={handleChange}
                             required
                         />

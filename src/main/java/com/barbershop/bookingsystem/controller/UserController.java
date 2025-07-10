@@ -20,6 +20,11 @@ public class UserController {
         return userService.findAll();
     }
 
+    @GetMapping("/role-USER")
+    public List<User> getUsers() {
+        return userService.findByRole();
+    }
+
     @GetMapping("/{id}")
     public User getById(@PathVariable Long id) {
         return userService.findById(id).orElseThrow();
