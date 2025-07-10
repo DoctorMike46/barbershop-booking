@@ -5,7 +5,10 @@ import { getUserRoleFromToken } from '../utils/auth';
 import ClientList from "../components/ClientList";
 import ServiceList from "../components/ServiceList";
 import WorkingHours from "../components/WorkingHours";
-
+import Announcements from "../components/Announcements";
+import Products from "../components/Products";
+import DashboardOverview from "../components/DashboardOverview";
+import UserBooking from "../components/UserBooking";
 
 
 const Dashboard = () => {
@@ -26,16 +29,14 @@ const Dashboard = () => {
 
             {/* Contenuto scrollabile a destra della sidebar */}
             <div className="ml-64 mt-20 h-[calc(100vh-5rem)] overflow-y-auto px-8 pt-6 transition-all duration-300">
-                {section === 'home' && (
-                    <>
-                        <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-                        <p>Benvenuto nella tua area personale come <strong>{role}</strong>.</p>
-                    </>
-                )}
 
+                {section === 'home' && <DashboardOverview />}
+                {section === 'prenUser' && <UserBooking />}
                 {section === 'clienti' && <ClientList />}
                 {section === 'servizi' && <ServiceList />}
                 {section === 'orario' && <WorkingHours />}
+                {section === 'annunci' && <Announcements />}
+                {section === 'prodotti' && <Products />}
 
             </div>
         </div>

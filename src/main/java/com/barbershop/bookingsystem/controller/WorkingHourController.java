@@ -43,8 +43,8 @@ public class WorkingHourController {
         ));
     }
 
-    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         workingHourService.deleteById(id);
     }

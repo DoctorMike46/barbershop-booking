@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const giorniSettimana = [
-    'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'
-];
+const giorniMap = {
+    MONDAY: 'Lunedì',
+    TUESDAY: 'Martedì',
+    WEDNESDAY: 'Mercoledì',
+    THURSDAY: 'Giovedì',
+    FRIDAY: 'Venerdì',
+    SATURDAY: 'Sabato',
+    SUNDAY: 'Domenica',
+};
 
 const WorkingHours = () => {
     const [orari, setOrari] = useState([]);
@@ -33,15 +39,18 @@ const WorkingHours = () => {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.put('http://localhost:8080/api/working-hours', orari, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            for (const orario of orari) {
+                await axios.put(`http://localhost:8080/api/working-hours/${orario.id}`, orario, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
             alert('Orari salvati con successo');
         } catch (error) {
             console.error('Errore durante il salvataggio:', error);
             alert('Errore durante il salvataggio');
         }
     };
+
 
 
 
@@ -52,7 +61,7 @@ const WorkingHours = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {orari.map((giorno, index) => (
                     <div key={index} className="bg-white/10 p-4 rounded-lg border border-white/20 shadow-md">
-                        <h2 className="text-xl font-semibold mb-2">{giorno.dayOfWeek}</h2>
+                        <h2 className="text-xl font-semibold mb-2">{giorniMap[giorno.dayOfWeek]}</h2>
 
                         <label className="block mb-1">Mattina</label>
                         <div className="flex gap-2 mb-2">
@@ -106,7 +115,7 @@ const WorkingHours = () => {
             </div>
             <button
                 onClick={handleSave}
-                className="mt-6 px-6 py-2 bg-green-600 hover:bg-green-700 rounded"
+                className="mt-6 px-6 py-2 bg-blue-900 hover:bg-blue-950 rounded"
             >
                 Salva Orari
             </button>

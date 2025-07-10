@@ -5,7 +5,6 @@ import com.barbershop.bookingsystem.model.User;
 import com.barbershop.bookingsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Optional;
