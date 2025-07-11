@@ -14,5 +14,5 @@ public interface TimeSlotRepository extends JpaRepository<TimeSlot, Long> {
     boolean existsByDateAndStartTime(LocalDate date, LocalTime startTime);
     List<TimeSlot> findByDateOrderByStartTimeAsc(LocalDate date);
     List<TimeSlot> findByDateOrderByStartTime(LocalDate date);
-
+    List<TimeSlot> findAllByDateBefore(LocalDate date);
 }

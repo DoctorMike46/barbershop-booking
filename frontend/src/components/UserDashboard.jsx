@@ -72,7 +72,7 @@ const UserDashboard = () => {
                 {latestAnnouncement ? (
                     <div className="bg-white/10 p-4 rounded-lg">
                         <p className="font-bold">{latestAnnouncement.title}</p>
-                        <p className="text-sm text-gray-300 mt-1">{latestAnnouncement.description}</p>
+                        <p className="text-sm text-gray-300 mt-1">{latestAnnouncement.content}</p>
                     </div>
                 ) : (
                     <p className="text-gray-400">Nessun annuncio pubblicato.</p>
@@ -91,7 +91,6 @@ const UserDashboard = () => {
                         </div>
                     ))}
                 </div>
-                <button className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">Visualizza tutti</button>
             </div>
         </div>
     );

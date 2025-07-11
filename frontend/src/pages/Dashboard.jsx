@@ -44,7 +44,7 @@ const Dashboard = () => {
                 {section === 'orario' && <WorkingHours />}
                 {section === 'annunci' && <Announcements />}
                 {section === 'prodotti' && <Products />}
-                {section === 'slot' && <SlotAutoGenerator />}
+                {/*{section === 'slot' && <SlotAutoGenerator />} */}
 
                 {section === 'homeUser' && <UserDashboard />}
                 {section === 'prenUser' && <UserMyBookings />}

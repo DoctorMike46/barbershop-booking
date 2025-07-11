@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import CalendarModal from './CalendarModal';
 
 const UserBooking = () => {
     const [date, setDate] = useState(dayjs().format('YYYY-MM-DD'));
@@ -9,6 +10,8 @@ const UserBooking = () => {
     const [slots, setSlots] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [note, setNote] = useState('');
+
+    const [calendarLink, setCalendarLink] = useState(null);
 
     const fetchServices = useCallback(async () => {
         const token = localStorage.getItem('token');
@@ -42,26 +45,36 @@ const UserBooking = () => {
     }, [fetchSlots]);
 
     const handleBooking = async () => {
+
+        const token = localStorage.getItem('token');
+
         if (!selectedService || !selectedSlot) {
             alert("Seleziona un servizio e uno slot.");
             return;
         }
 
-        const token = localStorage.getItem('token');
-        await axios.post('http://localhost:8080/api/bookings', {
-            serviceId: selectedService,
-            timeSlotId: selectedSlot,
-            note: note
-        }, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        try {
+            const res = await axios.post('http://localhost:8080/api/bookings', {
+                serviceId: selectedService,
+                timeSlotId: selectedSlot,
+                note: note
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
 
-        alert("Prenotazione effettuata con successo!");
-        setSelectedService('');
-        setSelectedSlot(null);
-        setNote('');
-        setSlots([]);
+            const booking = res.data;
+            setCalendarLink(booking.calendarLink);
+
+            setSelectedService('');
+            setSelectedSlot(null);
+            setNote('');
+            setSlots([]);
+        } catch (err) {
+            console.error("Errore nella prenotazione utente:", err);
+            alert("Errore durante la prenotazione.");
+        }
     };
+
 
     return (
         <div className="px-8 pt-6 text-white min-h-screen">
@@ -137,6 +150,13 @@ const UserBooking = () => {
             >
                 Prenota
             </button>
+
+            <CalendarModal
+                isOpen={!!calendarLink}
+                onClose={() => setCalendarLink(null)}
+                calendarLink={calendarLink}
+            />
+
         </div>
     );
 };

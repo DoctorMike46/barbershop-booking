@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import ConfirmModal from './ConfirmModal';
 
 const UserMyBookings = () => {
     const [bookings, setBookings] = useState([]);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [bookingToCancel, setBookingToCancel] = useState(null);
     const token = localStorage.getItem('token');
 
     const fetchBookings = async () => {
@@ -17,14 +20,19 @@ const UserMyBookings = () => {
         }
     };
 
-    const handleCancel = async (id) => {
-        const confirm = window.confirm("Sei sicuro di voler cancellare questa prenotazione?");
-        if (!confirm) return;
+    const confirmCancel = (id) => {
+        setBookingToCancel(id);
+        setShowConfirm(true);
+    };
+
+    const handleCancel = async () => {
         try {
-            await axios.delete(`http://localhost:8080/api/bookings/${id}`, {
+            await axios.delete(`http://localhost:8080/api/bookings/${bookingToCancel}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            fetchBookings(); // aggiorna la lista dopo la cancellazione
+            setShowConfirm(false);
+            setBookingToCancel(null);
+            fetchBookings(); // aggiorna la lista
         } catch (err) {
             console.error("Errore nella cancellazione", err);
         }
@@ -46,16 +54,14 @@ const UserMyBookings = () => {
                 {bookings.map(booking => (
                     <div key={booking.id} className="bg-white/10 border border-white/20 p-4 rounded-xl shadow">
                         <h2 className="text-xl font-semibold">{booking.service.name}</h2>
-                        <p className="text-gray-300 mt-1">
-                            ⏰ {booking.timeSlot.startTime.slice(0, 5)} - {booking.timeSlot.endTime.slice(0, 5)}
-                            {' '}📅 {dayjs(booking.timeSlot.date).format('DD/MM/YYYY')}
-                        </p>
+                        <p>{dayjs(booking.timeSlot.date).format("DD/MM/YYYY")} alle {booking.timeSlot.startTime.slice(0, 5)}</p>
+
                         {booking.note && (
                             <p className="text-sm text-gray-400 mt-1">📝 {booking.note}</p>
                         )}
                         <p className="text-sm text-gray-400 mt-1">📌 Stato: {booking.status}</p>
                         <button
-                            onClick={() => handleCancel(booking.id)}
+                            onClick={() => confirmCancel(booking.id)}
                             className="mt-3 px-4 py-1 bg-red-600 hover:bg-red-700 rounded text-sm"
                         >
                             Cancella
@@ -63,6 +69,13 @@ const UserMyBookings = () => {
                     </div>
                 ))}
             </div>
+
+            <ConfirmModal
+                isOpen={showConfirm}
+                onClose={() => setShowConfirm(false)}
+                onConfirm={handleCancel}
+                message="Sei sicuro di voler cancellare questa prenotazione?"
+            />
         </div>
     );
 };

@@ -146,5 +146,6 @@ public class BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
-
 }
+
+

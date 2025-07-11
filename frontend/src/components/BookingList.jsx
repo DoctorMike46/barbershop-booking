@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {  FaTrash, FaTimes, FaPlus } from 'react-icons/fa';
 import AdminBookingForm from "./AdminBookingForm";
+import ConfirmModal from "./ConfirmModal";
 
 
 const BookingList = () => {
@@ -14,9 +15,6 @@ const BookingList = () => {
     const [filterDate, setFilterDate] = useState('');
     const [filterService, setFilterService] = useState('');
     const [services, setServices] = useState([]);
-
-
-
 
     useEffect(() => {
         fetchBooking();
@@ -48,7 +46,6 @@ const BookingList = () => {
             console.error("Errore nel recupero dei servizi:", error);
         }
     };
-
 
 
     const handleElimina = (booking) => {
@@ -132,22 +129,24 @@ const BookingList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filtered.map((booking) => (
                     <div key={booking.id} className="bg-white/10 p-4 rounded-lg shadow-md border border-white/10">
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-lg font-semibold">ID PRENOTAZIONE : {booking.id}</p>
+                        <div className="mb-3">
+                            <p><strong>Nome cliente:</strong> {booking.user?.name}</p>
+                            <p><strong>Email:</strong> {booking.user?.email}</p>
+                            <p><strong>Telefono:</strong> {booking.user?.telefono || 'Non disponibile'}</p>
                         </div>
-                        <div className="items-center justify-between mb-3">
-                            <p><strong>Cliente:</strong> {booking.user?.name}</p>
+                        <div className="mb-3">
                             <p><strong>Servizio:</strong> {booking.service?.name}</p>
-                            <p><strong>Orario:</strong> {booking.timeSlot?.startTime}</p>
+                            <p><strong>Data:</strong> {booking.timeSlot?.date}</p>
+                            <p><strong>Ora:</strong> {booking.timeSlot?.startTime?.slice(0, 5)}</p>
                         </div>
-
                         <div className="mt-4 flex gap-4 text-xl">
-                            {/*<FaEdit className="cursor-pointer hover:text-yellow-400" title="Modifica" onClick={() => handleModifica(booking)} /> */}
+                            {/* <FaEdit ... /> */}
                             <FaTrash className="cursor-pointer hover:text-red-400" title="Elimina" onClick={() => handleElimina(booking)} />
                         </div>
                     </div>
                 ))}
             </div>
+
 
             {popupType && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
@@ -198,6 +197,7 @@ const BookingList = () => {
                     </div>
                 </div>
             )}
+
         </div>
     );
 };

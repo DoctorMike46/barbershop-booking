@@ -61,13 +61,19 @@ const AdminBookingForm = ({ onSuccess, onCancel }) => {
             alert("Compila tutti i campi obbligatori.");
             return;
         }
-        await axios.post('http://localhost:8080/api/bookings/admin', formData, { headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        alert("Prenotazione creata con successo!");
-        if (onSuccess) onSuccess();
+
+        try {
+            const res = await axios.post('http://localhost:8080/api/bookings/admin', formData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (onSuccess) onSuccess();
+        } catch (err) {
+            console.error("Errore nella prenotazione admin:", err);
+            alert("Errore durante la prenotazione.");
+        }
     };
+
 
     return (
         <div className="bg-gray-900 p-6 rounded-lg shadow-md text-white">
@@ -114,8 +120,11 @@ const AdminBookingForm = ({ onSuccess, onCancel }) => {
                 <button onClick={handleSubmit} className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700">Conferma</button>
                 <button onClick={onCancel} className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-700">Annulla</button>
             </div>
+
         </div>
     );
 };
+
+
 
 export default AdminBookingForm;

@@ -1,10 +1,12 @@
 package com.barbershop.bookingsystem.controller;
 
 import com.barbershop.bookingsystem.dto.AdminBookingRequest;
+import com.barbershop.bookingsystem.dto.BookingResponseDTO;
 import com.barbershop.bookingsystem.model.Booking;
 import com.barbershop.bookingsystem.model.User;
 import com.barbershop.bookingsystem.security.CustomUserDetails;
 import com.barbershop.bookingsystem.service.BookingService;
+import com.barbershop.bookingsystem.service.CalendarLinkGenerator;
 import com.barbershop.bookingsystem.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -24,20 +26,38 @@ public class BookingController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(
+    public ResponseEntity<BookingResponseDTO> createBooking(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody BookingRequest request
     )
     {
         Booking booking = bookingService.createBooking(userDetails.getId(), request.getServiceId(), request.getTimeSlotId(), request.getNote());
-        return ResponseEntity.ok(booking);
+
+        String calendarLink = CalendarLinkGenerator.generateGoogleCalendarLink(
+                booking.getService().getName(),
+                "Prenotazione presso La Barberia di Luca",
+                booking.getTimeSlot().getDate(),
+                booking.getTimeSlot().getStartTime(),
+                booking.getTimeSlot().getEndTime()
+        );
+
+        return ResponseEntity.ok(new BookingResponseDTO(booking, calendarLink));
     }
 
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Booking> createBookingAsAdmin(@RequestBody AdminBookingRequest request) {
+    public ResponseEntity<BookingResponseDTO> createBookingAsAdmin(@RequestBody AdminBookingRequest request) {
         Booking booking = bookingService.createBooking(request.getUserId(), request.getServiceId(), request.getTimeSlotId(), request.getNote());
-        return ResponseEntity.ok(booking);
+
+        String calendarLink = CalendarLinkGenerator.generateGoogleCalendarLink(
+                booking.getService().getName(),
+                "Prenotazione presso La Barberia di Luca",
+                booking.getTimeSlot().getDate(),
+                booking.getTimeSlot().getStartTime(),
+                booking.getTimeSlot().getEndTime()
+        );
+
+        return ResponseEntity.ok(new BookingResponseDTO(booking, calendarLink));
     }
 
 
