@@ -4,14 +4,22 @@ import clsx from 'clsx';
 const Sidebar = ({ role, section, setSection }) => {
 
     const adminItems = [
-        { label: 'Dashboard', value: 'home' },
-        { label: 'Pren User', value: 'prenUser' },
+        { label: 'Dashboard', value: 'homeAdmin' },
         { label: 'Prenotazioni', value: 'prenotazioni' },
         { label: 'Clienti', value: 'clienti' },
         { label: 'Servizi', value: 'servizi' },
         { label: 'Prodotti', value: 'prodotti' },
         { label: 'Orario Salone', value: 'orario' },
         { label: 'Annunci', value: 'annunci' },
+        { label: 'Genera Slot', value: 'slot' },
+    ];
+
+    const userItems = [
+        { label: 'Dashboard', value: 'homeUser' },
+        { label: 'Nuova Prenotazione', value: 'newPren' },
+        { label: 'Prenotazioni', value: 'prenUser' },
+        { label: 'Prodotti', value: 'prodUser' },
+        { label: 'Messaggi', value: 'mesUser' },
     ];
 
     return (
@@ -21,6 +29,24 @@ const Sidebar = ({ role, section, setSection }) => {
                 {role === 'ADMIN' && (
                     <>
                         {adminItems.map((item) => (
+                            <li key={item.value}>
+                                <button
+                                    onClick={() => setSection(item.value)}
+                                    className={clsx(
+                                        "w-full text-left px-4 py-2 rounded-md transition",
+                                        section === item.value ? "bg-white/20 font-semibold" : "hover:bg-white/10"
+                                    )}
+                                >
+                                    {item.label}
+                                </button>
+                            </li>
+                        ))}
+                    </>
+                )}
+
+                {role === 'USER' && (
+                    <>
+                        {userItems.map((item) => (
                             <li key={item.value}>
                                 <button
                                     onClick={() => setSection(item.value)}

@@ -9,11 +9,18 @@ import Announcements from "../components/Announcements";
 import Products from "../components/Products";
 import DashboardOverview from "../components/DashboardOverview";
 import UserBooking from "../components/UserBooking";
+import BookingList from "../components/BookingList";
+import SlotAutoGenerator from "../components/SlotAutoGenerator";
+import UserProducts from "../components/UserProducts";
+import UserMyBookings from "../components/UserMyBookings";
+import UserAnnouncements from "../components/UserAnnouncements";
+import UserDashboard from "../components/UserDashboard";
+import ViewUserBooking from "../components/ViewUserBooking";
 
 
 const Dashboard = () => {
     const role = getUserRoleFromToken();
-    const [section, setSection] = useState('home');
+    const [section, setSection] = useState(role === 'USER' ? 'homeUser' : 'homeAdmin');
 
     return (
         <div className="h-screen overflow-hidden bg-gradient-to-br from-gray-900 to-black text-white">
@@ -30,13 +37,21 @@ const Dashboard = () => {
             {/* Contenuto scrollabile a destra della sidebar */}
             <div className="ml-64 mt-20 h-[calc(100vh-5rem)] overflow-y-auto px-8 pt-6 transition-all duration-300">
 
-                {section === 'home' && <DashboardOverview />}
-                {section === 'prenUser' && <UserBooking />}
+                {section === 'homeAdmin' && <DashboardOverview />}
+                {section === 'prenotazioni' && <BookingList />}
                 {section === 'clienti' && <ClientList />}
                 {section === 'servizi' && <ServiceList />}
                 {section === 'orario' && <WorkingHours />}
                 {section === 'annunci' && <Announcements />}
                 {section === 'prodotti' && <Products />}
+                {section === 'slot' && <SlotAutoGenerator />}
+
+                {section === 'homeUser' && <UserDashboard />}
+                {section === 'prenUser' && <UserMyBookings />}
+                {section === 'newPren' && <UserBooking />}
+                {section === 'prodUser' && <UserProducts />}
+                {section === 'mesUser' && <UserAnnouncements />}
+
 
             </div>
         </div>

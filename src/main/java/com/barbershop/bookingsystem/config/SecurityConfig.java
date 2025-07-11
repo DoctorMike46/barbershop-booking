@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/timeslots/**").authenticated()
-                        .requestMatchers("/api/bookings/**").hasRole("ADMIN")
+                        .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/working-hours/**").permitAll()
                         .anyRequest().authenticated()

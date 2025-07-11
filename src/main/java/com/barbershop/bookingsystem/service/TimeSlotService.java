@@ -12,6 +12,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,9 +64,83 @@ public class TimeSlotService {
         return list;
     }
 
-    public List<TimeSlot> getAvailableSlots(LocalDate date) {
-        return timeSlotRepository.findByDate(date).stream()
+    // Ottieni slot disponibili per una data
+    public List<TimeSlot> getAvailableSlots(LocalDate date, int durationInMinutes) {
+        List<TimeSlot> allSlots = timeSlotRepository.findByDateOrderByStartTime(date)
+                .stream()
                 .filter(TimeSlot::isAvailable)
                 .toList();
+
+        List<TimeSlot> result = new ArrayList<>();
+
+        int slotsNeeded = durationInMinutes / 30; // supponiamo che ogni slot sia da 30 minuti
+
+        for (int i = 0; i <= allSlots.size() - slotsNeeded; i++) {
+            boolean valid = true;
+
+            for (int j = 1; j < slotsNeeded; j++) {
+                LocalTime expectedStart = allSlots.get(i).getStartTime().plusMinutes(j * 30);
+                if (!allSlots.get(i + j).getStartTime().equals(expectedStart)) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (valid) {
+                result.add(allSlots.get(i)); // aggiungi solo il primo slot come slot "prenotabile"
+            }
+        }
+
+        return result;
     }
+    public void generateSlotsForNextWeeks(int weeks, int stepMinutes) {
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusWeeks(weeks);
+
+        for (LocalDate date = today; !date.isAfter(endDate); date = date.plusDays(1)) {
+            Optional<WorkingHour> workingHourOpt = workingHourRepository.findByDayOfWeek(date.getDayOfWeek());
+            if (workingHourOpt.isEmpty()) continue;
+
+            WorkingHour workingHour = workingHourOpt.get();
+            if (workingHour.isClosedAllDay()) continue;
+
+            // Verifica slot già esistenti
+            List<TimeSlot> existing = timeSlotRepository.findByDate(date);
+            Set<LocalTime> existingStarts = existing.stream()
+                    .map(TimeSlot::getStartTime)
+                    .collect(Collectors.toSet());
+
+            List<TimeSlot> toInsert = new ArrayList<>();
+
+            if (workingHour.getMorningOpen() != null && workingHour.getMorningClose() != null) {
+                toInsert.addAll(generateMissingSlots(date, workingHour.getMorningOpen(), workingHour.getMorningClose(), stepMinutes, existingStarts));
+            }
+
+            if (workingHour.getAfternoonOpen() != null && workingHour.getAfternoonClose() != null) {
+                toInsert.addAll(generateMissingSlots(date, workingHour.getAfternoonOpen(), workingHour.getAfternoonClose(), stepMinutes, existingStarts));
+            }
+
+            timeSlotRepository.saveAll(toInsert);
+        }
+    }
+
+    private List<TimeSlot> generateMissingSlots(LocalDate date, LocalTime start, LocalTime end, int step, Set<LocalTime> existingStarts) {
+        List<TimeSlot> result = new ArrayList<>();
+        LocalTime current = start;
+
+        while (!current.plusMinutes(step).isAfter(end)) {
+            if (!existingStarts.contains(current)) {
+                TimeSlot slot = new TimeSlot();
+                slot.setDate(date);
+                slot.setStartTime(current);
+                slot.setEndTime(current.plusMinutes(step));
+                slot.setAvailable(true);
+                result.add(slot);
+            }
+            current = current.plusMinutes(step);
+        }
+
+        return result;
+    }
+
 }

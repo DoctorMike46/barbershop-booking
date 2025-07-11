@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {FaEye, FaEdit, FaTrash, FaTimes, FaUserSlash, FaUserCheck, FaPlus} from 'react-icons/fa';
+import { FaEdit, FaTrash, FaTimes, FaUserSlash, FaUserCheck, FaPlus} from 'react-icons/fa';
 
 const ClientList = () => {
     const [clienti, setClienti] = useState([]);
@@ -25,10 +25,6 @@ const ClientList = () => {
         }
     };
 
-    const handleVisualizza = (cliente) => {
-        setSelectedClient(cliente);
-        setPopupType('visualizza');
-    };
 
     const handleModifica = (cliente) => {
         setSelectedClient(cliente);
@@ -136,7 +132,7 @@ const ClientList = () => {
                         <p><strong>Telefono:</strong> {cliente.telefono}</p>
 
                         <div className="mt-4 flex gap-4 text-xl">
-                            <FaEye className="cursor-pointer hover:text-blue-400" title="Visualizza" onClick={() => handleVisualizza(cliente)} />
+                            {/*<FaEye className="cursor-pointer hover:text-blue-400" title="Visualizza" onClick={() => handleVisualizza(cliente)} />  */}
                             <FaEdit className="cursor-pointer hover:text-yellow-400" title="Modifica" onClick={() => handleModifica(cliente)} />
                             <FaTrash className="cursor-pointer hover:text-red-400" title="Elimina" onClick={() => handleElimina(cliente)} />
                         </div>

@@ -1,5 +1,6 @@
 package com.barbershop.bookingsystem.controller;
 
+import com.barbershop.bookingsystem.dto.AdminBookingRequest;
 import com.barbershop.bookingsystem.model.Booking;
 import com.barbershop.bookingsystem.model.User;
 import com.barbershop.bookingsystem.security.CustomUserDetails;
@@ -8,6 +9,7 @@ import com.barbershop.bookingsystem.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +29,24 @@ public class BookingController {
             @RequestBody BookingRequest request
     )
     {
-
         Booking booking = bookingService.createBooking(userDetails.getId(), request.getServiceId(), request.getTimeSlotId(), request.getNote());
         return ResponseEntity.ok(booking);
     }
+
+    @PostMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Booking> createBookingAsAdmin(@RequestBody AdminBookingRequest request) {
+        Booking booking = bookingService.createBooking(request.getUserId(), request.getServiceId(), request.getTimeSlotId(), request.getNote());
+        return ResponseEntity.ok(booking);
+    }
+
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Booking>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+
 
     @GetMapping("/me")
     public ResponseEntity<List<Booking>> getUserBookings(

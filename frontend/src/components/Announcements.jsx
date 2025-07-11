@@ -73,7 +73,7 @@ const Announcements = () => {
                 />
                 <button
                     onClick={handleAdd}
-                    className="px-5 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium"
+                    className="px-5 py-2 bg-blue-900 hover:bg-blue-950 rounded-lg font-medium"
                 >
                     Aggiungi Annuncio
                 </button>

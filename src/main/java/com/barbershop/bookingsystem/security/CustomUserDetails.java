@@ -1,5 +1,6 @@
 package com.barbershop.bookingsystem.security;
 
+import com.barbershop.bookingsystem.model.Role;
 import com.barbershop.bookingsystem.model.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,13 +15,15 @@ public class CustomUserDetails implements UserDetails {
     private final Long id;
     private final String email;
     private final String password;
+    private final Role role;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(User user) {
+    public CustomUserDetails(User user, Role role) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.authorities = Collections.singletonList(() -> "ROLE_" + user.getRole().name());
+        this.role = role;
     }
 
     @Override

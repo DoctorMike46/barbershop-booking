@@ -15,18 +15,20 @@ const DashboardOverview = () => {
         const fetchData = async () => {
             const token = localStorage.getItem('token');
             try {
-                const [clientsRes, servicesRes, productsRes, announcementsRes] = await Promise.all([
+                const [clientsRes, servicesRes, productsRes, announcementsRes, prenotaioniRes] = await Promise.all([
                     axios.get('http://localhost:8080/api/users', { headers: { Authorization: `Bearer ${token}` } }),
                     axios.get('http://localhost:8080/api/services', { headers: { Authorization: `Bearer ${token}` } }),
                     axios.get('http://localhost:8080/api/products', { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get('http://localhost:8080/api/announcements', { headers: { Authorization: `Bearer ${token}` } })
+                    axios.get('http://localhost:8080/api/announcements', { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get('http://localhost:8080/api/bookings', { headers: { Authorization: `Bearer ${token}` } }),
+
                 ]);
                 setStats({
                     clients: clientsRes.data.length,
                     services: servicesRes.data.length,
                     products: productsRes.data.length,
                     announcements: announcementsRes.data.length,
-                    bookings: 0 // Da aggiornare quando ci sarà l'API delle prenotazioni
+                    bookings: prenotaioniRes.data.length,
                 });
             } catch (error) {
                 console.error('Errore nel caricamento delle statistiche:', error);

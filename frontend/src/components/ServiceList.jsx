@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaTimes, FaPlus } from 'react-icons/fa';
-import config from "tailwindcss/defaultConfig";
 
 const ServiceList = () => {
     const [services, setServices] = useState([]);

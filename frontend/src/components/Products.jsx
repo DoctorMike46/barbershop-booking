@@ -79,7 +79,7 @@ const Products = () => {
                 />
                 <button
                     onClick={handleAdd}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded"
+                    className="px-4 py-2 bg-blue-900 hover:bg-blue-950 rounded"
                 >
                     Aggiungi Prodotto
                 </button>
