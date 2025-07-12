@@ -1,9 +1,11 @@
 package com.barbershop.bookingsystem.controller;
 
+import com.barbershop.bookingsystem.dto.UserDTO;
 import com.barbershop.bookingsystem.model.User;
 import com.barbershop.bookingsystem.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,5 +57,23 @@ public class UserController {
         existingUser.setTelefono(updatedUser.getTelefono());
         existingUser.setActive(updatedUser.isActive());
         return userService.save(existingUser);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+
+        // Mappa l'entità User su UserDTO
+        UserDTO dto = new UserDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getTelefono(),
+                user.getRole(),
+                user.isActive()
+        );
+        return ResponseEntity.ok(dto);
     }
 }

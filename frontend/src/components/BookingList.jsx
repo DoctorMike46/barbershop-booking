@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {  FaTrash, FaTimes, FaPlus } from 'react-icons/fa';
 import AdminBookingForm from "./AdminBookingForm";
-import ConfirmModal from "./ConfirmModal";
 
 
 const BookingList = () => {
@@ -164,26 +163,6 @@ const BookingList = () => {
                                 onCancel={closePopup}
                             />
                         )}
-
-                        {/*}
-                        {(popupType === 'modifica' || popupType === 'nuovo') && (
-                            <>
-                                <h2 className="text-2xl font-semibold mb-4">{popupType === 'nuovo' ? 'Nuova Prenotazione' : 'Modifica Prenotazione'}</h2>
-                                <form className="space-y-3">
-                                    <input name="name" placeholder="Nome" onChange={handleFormChange} value={formData.name} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <input name="duration" placeholder="Durata (minuti)" type="number" onChange={handleFormChange} value={formData.duration} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <input name="price" placeholder="Prezzo (€)" type="number" step="0.01" onChange={handleFormChange} value={formData.price} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded" />
-                                    <button
-                                        type="button"
-                                        onClick={popupType === 'nuovo' ? handleCreate : handleSave}
-                                        className="w-full py-2 bg-blue-500 rounded hover:bg-blue-600"
-                                    >
-                                        Salva
-                                    </button>
-                                </form>
-                            </>
-                        )}
-                        */}
 
                         {popupType === 'elimina' && (
                             <>
