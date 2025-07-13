@@ -73,7 +73,6 @@ public class BookingController {
             @AuthenticationPrincipal CustomUserDetails userDetails)
     {
         User user = userService.findById(userDetails.getId()).orElseThrow();
-        System.out.println("-------------"+ user.getName());
         return ResponseEntity.ok(bookingService.getBookingsByUser(user));
     }
 

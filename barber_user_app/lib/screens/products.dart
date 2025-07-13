@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import '/services/api.dart';
 
-class AnnouncementsScreen extends StatefulWidget {
-  const AnnouncementsScreen({super.key});
+class ProductsScreen extends StatefulWidget {
+  const ProductsScreen({super.key});
 
   @override
-  _AnnouncementsScreen createState() => _AnnouncementsScreen();
+  _ProductsScreenState createState() => _ProductsScreenState();
 }
 
-class _AnnouncementsScreen extends State<AnnouncementsScreen> {
-  List<Map<String, dynamic>> _annunci = [];
+class _ProductsScreenState extends State<ProductsScreen> {
+  List<Map<String, dynamic>> _products = [];
   bool _loading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _fetchAnnunci();
+    _fetchProducts();
   }
 
-  Future<void> _fetchAnnunci() async {
+  Future<void> _fetchProducts() async {
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
-      final result = await Api.getAnnouncements();
+      final result = await Api.getProducts();
       if (result != null) {
         setState(() {
-          _annunci = result;
+          _products = result;
           _loading = false;
         });
       } else {
         setState(() {
-          _error = 'Nessun annuncio disponibile';
+          _error = 'Nessun prodotto disponibile';
           _loading = false;
         });
       }
@@ -55,10 +55,10 @@ class _AnnouncementsScreen extends State<AnnouncementsScreen> {
     }
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: _annunci.length,
+      itemCount: _products.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        final annuncio = _annunci[index];
+        final product = _products[index];
         return Card(
           color: Colors.white70,
           elevation: 4,
@@ -70,22 +70,31 @@ class _AnnouncementsScreen extends State<AnnouncementsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  annuncio['title'] ?? 'Titolo mancante',
+                  product['name'] ?? 'Nome mancante',
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  annuncio['content'] ?? 'Contenuto mancante',
+                  product['description'] ?? 'Descrizione mancante',
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '€${product['price']?.toStringAsFixed(2) ?? '0.00'}',
+                  style: const TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
+                    color: Colors.black,
                   ),
                 ),
               ],

@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,9 +27,6 @@ public class TimeSlotController {
             @RequestParam("duration") int durationInMinutes) {
         return ResponseEntity.ok(timeSlotService.getAvailableSlots(date, durationInMinutes));
     }
-
-
-
 
     // Endpoint per generare slot per una certa data e durata
     @PostMapping("/generate")
@@ -52,5 +47,23 @@ public class TimeSlotController {
         timeSlotService.generateSlotsForNextWeeks(weeks, stepMinutes);
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/available-days")
+    public ResponseEntity<List<LocalDate>> getAvailableDays() {
+        List<LocalDate> days = timeSlotService.getAvailableDays();
+        return ResponseEntity.ok(days);
+    }
+/*
+    @GetMapping("/{serviceId}/available-days/{date}/time-slots")
+    public ResponseEntity<List<TimeSlot>> getAvailableTimeSlots(
+            @PathVariable Long serviceId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        List<TimeSlot> slots = timeSlotService.getAvailableTimeSlots(serviceId, date);
+        return ResponseEntity.ok(slots);
+    }
+
+     */
 
 }

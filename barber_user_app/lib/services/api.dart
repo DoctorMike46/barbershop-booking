@@ -1,4 +1,3 @@
-// lib/services/api.dart
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -124,6 +123,120 @@ class Api {
     if (res.statusCode == 200) {
       final List<dynamic> list = jsonDecode(res.body) as List<dynamic>;
       return list.map((e) => e as Map<String, dynamic>).toList();
+    }
+    return null;
+  }
+
+  // recupero i prodotti
+  static Future<List<Map<String, dynamic>>?> getProducts() async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+    final uri = Uri.parse('$_apiUrl/products');
+    final res = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (res.statusCode == 200) {
+      final List<dynamic> list = jsonDecode(res.body) as List<dynamic>;
+      return list.map((e) => e as Map<String, dynamic>).toList();
+    }
+    return null;
+  }
+
+  // recupero i giorni lavorativi del salone
+  static Future<List<Map<String, dynamic>>?> getWorkingDays() async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+    final uri = Uri.parse('$_apiUrl/working-hours');
+    final res = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (res.statusCode == 200) {
+      final List<dynamic> list = jsonDecode(res.body) as List<dynamic>;
+      return list.map((e) => e as Map<String, dynamic>).toList();
+    }
+    return null;
+  }
+
+  // recupero i servizi del salone
+  static Future<List<Map<String, dynamic>>?> getServices() async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+    final uri = Uri.parse('$_apiUrl/services');
+    final res = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (res.statusCode == 200) {
+      final List<dynamic> list = jsonDecode(res.body) as List<dynamic>;
+      return list.map((e) => e as Map<String, dynamic>).toList();
+    }
+    return null;
+  }
+
+
+
+  // recupero i timeSlot disponibili in base alla durata del servizio e al giorno
+  static Future<List<Map<String, dynamic>>?> getTimeSlots(String date,int durationService) async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+
+    final uri = Uri.parse('$_apiUrl/timeslots/available?date=$date&duration=$durationService');
+    final res = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (res.statusCode == 200) {
+      final List<dynamic> list = jsonDecode(res.body) as List<dynamic>;
+      return list.map((e) => e as Map<String, dynamic>).toList();
+    }
+    return null;
+  }
+
+  /// Recupera i giorni disponibili (lista di date ISO string)
+  static Future<List<String>?> getAvailableDays() async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+
+    final uri = Uri.parse('$_apiUrl/timeslots/available-days');
+    final res = await http.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (res.statusCode == 200) {
+      final raw = jsonDecode(res.body) as List<dynamic>;
+      // Mappa ogni elemento a String, non a Map
+      return raw.map((e) => e as String).toList();
+    }
+    return null;
+  }
+
+
+  static Future<bool?> createBooking( {
+     required int serviceId,
+     required int timeSlotId,
+  }) async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return null;
+
+    final uri = Uri.parse('$_apiUrl/bookings');
+    final res = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'serviceId': serviceId,
+        'timeSlotId': timeSlotId,
+      }),
+    );
+
+    if (res.statusCode == 200) {
+      final map = jsonDecode(res.body) as Map<String, dynamic>;
+      return true;
     }
     return null;
   }

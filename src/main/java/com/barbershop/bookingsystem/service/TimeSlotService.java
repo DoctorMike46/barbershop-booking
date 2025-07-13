@@ -66,6 +66,7 @@ public class TimeSlotService {
 
     // Ottieni slot disponibili per una data
     public List<TimeSlot> getAvailableSlots(LocalDate date, int durationInMinutes) {
+
         List<TimeSlot> allSlots = timeSlotRepository.findByDateOrderByStartTime(date)
                 .stream()
                 .filter(TimeSlot::isAvailable)
@@ -142,5 +143,16 @@ public class TimeSlotService {
 
         return result;
     }
+
+
+    public List<LocalDate> getAvailableDays() {
+        return timeSlotRepository.findAvailableDates();
+    }
+/*
+    public List<TimeSlot> getAvailableTimeSlots(Long serviceId, LocalDate date) {
+        return timeSlotRepository.findByServiceIdAndDateAndAvailableTrue(serviceId, date);
+    }
+
+     */
 
 }
