@@ -13,6 +13,8 @@ class BookingScreen extends StatefulWidget {
 
 class _BookingScreenState extends State<BookingScreen> {
   int _step = 0;
+  bool _reverse = false;
+
 
   List<Map<String, dynamic>> _services = [];
   Map<String, dynamic>? _selectedService;
@@ -58,6 +60,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> _selectService(Map<String, dynamic> service) async {
     setState(() {
+      _reverse = false;
       _selectedService = service;
       _step = 1;
       _loading = true;
@@ -79,6 +82,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Future<void> _selectDay(String dateStr) async {
     setState(() {
+      _reverse = false; // avanti
       _selectedDay = dateStr;
       _step = 2;
       _loading = true;
@@ -127,20 +131,41 @@ class _BookingScreenState extends State<BookingScreen> {
     if (_loading) return const Center(child: CircularProgressIndicator(color: Colors.white,));
     if (_error != null) return Center(child: Text(_error!));
 
-    switch (_step) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      child: KeyedSubtree(
+        key: ValueKey(_step),
+        child: _buildStep(_step),
+      ),
+    );
+
+
+
+  }
+
+  Widget _buildStep(int step) {
+    switch (step) {
       case 0:
-        return _buildServicesStep();
+        return _buildServicesStep(key: const ValueKey('step0'));
       case 1:
-        return _buildDaysStep();
+        return _buildDaysStep(key: const ValueKey('step1'));
       case 2:
-        return _buildTimeSlotsStep();
+        return _buildTimeSlotsStep(key: const ValueKey('step2'));
       default:
         return const SizedBox.shrink();
     }
   }
 
-  Widget _buildServicesStep() {
+
+  Widget _buildServicesStep({Key? key}) {
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const Padding(
@@ -185,7 +210,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  trailing: const Icon(Icons.arrow_forward, color: Colors.black),
+                  trailing: const Icon(Icons.arrow_forward, color: Colors.indigoAccent),
                   onTap: () => _selectService(svc),
                 ),
               );
@@ -196,11 +221,12 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildDaysStep() {
+  Widget _buildDaysStep({Key? key}) {
     if (_availableDays.isEmpty) {
       return const Center(child: Text('Nessuna data disponibile'));
     }
     return Column(
+      key: key,
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
@@ -256,7 +282,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             day,
                             style: const TextStyle(
                               fontFamily: 'Montserrat',
-                              color: Colors.indigo,
+                              color: Colors.indigoAccent,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -276,17 +302,25 @@ class _BookingScreenState extends State<BookingScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
             child: TextButton(
               onPressed: () => setState(() {
+                _reverse = true;
                 _step = 0;
                 _selectedService = null;
               }),
-              child: const Text(
-                'Torna ai servizi',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.arrow_back, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text(
+                    'Torna ai servizi',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              )
             ),
           ),
         ),
@@ -294,11 +328,12 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _buildTimeSlotsStep() {
+  Widget _buildTimeSlotsStep({Key? key}) {
     if (_timeSlots.isEmpty) {
       return const Center(child: Text('Nessun orario disponibile'));
     }
     return Column(
+      key: key,
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
@@ -324,7 +359,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 onTap: () => setState(() => _selectedTimeSlot = ts),
                 child: Card(
                   shadowColor: Colors.white,
-                  color: selected ? Colors.indigo[200] : Colors.white70,
+                  color: selected ? Colors.indigoAccent : Colors.white70,
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -387,26 +422,37 @@ class _BookingScreenState extends State<BookingScreen> {
                 alignment: Alignment.centerLeft,
                 child: TextButton(
                   onPressed: () => setState(() {
+                    _reverse = true;
                     _step = 1;
                     _selectedDay = null;
                     _timeSlots = [];
                     _selectedTimeSlot = null;
                   }),
-                  child: const Text(
-                    'Torna alle date',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.arrow_back, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        'Torna alle date',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  )
                 ),
               ),
               const SizedBox(height: 8),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
+                  backgroundColor: Colors.indigoAccent,
                   foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 onPressed: _selectedTimeSlot == null ? null : _book,
                 child: const Text(

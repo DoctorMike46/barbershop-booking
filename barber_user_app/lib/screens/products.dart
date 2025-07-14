@@ -60,7 +60,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       itemBuilder: (context, index) {
         final product = _products[index];
         return Card(
-          color: Colors.white70,
+          color: Colors.indigo[100],
           elevation: 4,
           shadowColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

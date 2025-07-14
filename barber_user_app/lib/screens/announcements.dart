@@ -60,7 +60,7 @@ class _AnnouncementsScreen extends State<AnnouncementsScreen> {
       itemBuilder: (context, index) {
         final annuncio = _annunci[index];
         return Card(
-          color: Colors.white70,
+          color: Colors.indigo[100],
           elevation: 4,
           shadowColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

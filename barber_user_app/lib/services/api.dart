@@ -194,7 +194,7 @@ class Api {
     return null;
   }
 
-  /// Recupera i giorni disponibili (lista di date ISO string)
+  // Recupera i giorni disponibili (lista di date ISO string)
   static Future<List<String>?> getAvailableDays() async {
     final token = await _storage.read(key: 'jwt');
     if (token == null) return null;
@@ -213,7 +213,7 @@ class Api {
     return null;
   }
 
-
+  // crea una prenotazioni
   static Future<bool?> createBooking( {
      required int serviceId,
      required int timeSlotId,
@@ -239,6 +239,41 @@ class Api {
       return true;
     }
     return null;
+  }
+
+  // aggiorna il profilo utente
+  static Future<bool> updateProfile(int id, Map<String, dynamic> data) async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return false;
+
+    final uri = Uri.parse('$_apiUrl/users/$id');
+    final res = await http.put(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+
+    return res.statusCode == 200;
+  }
+
+  // cancella il profilo
+  static Future<bool> deleteProfile(int userId) async {
+    final token = await _storage.read(key: 'jwt');
+    if (token == null) return false;
+
+    final uri = Uri.parse('$_apiUrl/users/$userId');
+    final res = await http.delete(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    return res.statusCode == 200 || res.statusCode == 204;
   }
 
 }

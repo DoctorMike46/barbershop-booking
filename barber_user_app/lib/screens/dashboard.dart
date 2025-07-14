@@ -1,12 +1,11 @@
 import 'package:barber_user_app/screens/auth/homepage.dart';
 import 'package:barber_user_app/screens/products.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import '/services/api.dart';
 import 'announcements.dart';
 import 'booking.dart';
+import 'cuts.dart';
 import 'profile.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class DashboardScreen extends StatefulWidget {
@@ -27,6 +26,7 @@ class _DashboardScreen extends State<DashboardScreen> {
   final List<Widget> _pages = [
     const HomepageScreen(),
     const BookingScreen(),
+    const CutsGalleryWidget(),
     const ProductsScreen(),
     const ProfileScreen(),
   ];
@@ -93,42 +93,6 @@ class _DashboardScreen extends State<DashboardScreen> {
                   icon: const Icon(Icons.message, color: Colors.black),
                   onPressed: () => setState(() => _showAnnunci = true),
                 ),
-                /*IconButton(
-                  icon: const Icon(Icons.location_on, color: Colors.black),
-                  onPressed: () async {
-                    const latitude = 40.4264387;
-                    const longitude = 15.1932613;
-
-                    // 1) Prova Apple Maps
-                    final appleMapsUrl = 'maps://?q=$latitude,$longitude';
-
-                    try {
-                      var launched = await launchUrlString(
-                        appleMapsUrl,
-                        mode: LaunchMode.externalApplication,
-                      );
-
-                      if (!launched) {
-                        // 2) Se fallisce, apri Google Maps via browser
-                        final webUrl =
-                            'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-                        launched = await launchUrlString(
-                          webUrl,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      }
-
-                      if (!launched) {
-                        throw 'cannot launch any maps';
-                      }
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Impossibile aprire la mappa')),
-                      );
-                    }
-                  },
-                ),*/
-
               ],
             ),
           ),
@@ -163,10 +127,11 @@ class _DashboardScreen extends State<DashboardScreen> {
   }
 
   Widget _buildBottomNav() {
-    final labels = ['HOME', 'PRENOTA', 'PRODOTTI', 'PROFILO'];
+    final labels = ['HOME', 'PRENOTA','TAGLI', 'PRODOTTI', 'PROFILO'];
     final icons = [
       Icons.home,
       Icons.cut,
+      Icons.abc,
       Icons.shopping_bag_outlined,
       Icons.person,
     ];

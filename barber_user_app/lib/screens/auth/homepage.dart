@@ -211,7 +211,8 @@ class _HomepageScreenState extends State<HomepageScreen> {
                   padding: const EdgeInsets.all(12),
                   child: SingleChildScrollView(
                     child: closed
-                        ? Center(
+                        ? Column(
+                      children: [Center(
                       child: Text(
                         _translateDay(wd['dayOfWeek'] as String),
                         style: const TextStyle(
@@ -222,6 +223,19 @@ class _HomepageScreenState extends State<HomepageScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                    ),
+                        Center(
+                          child: Text('CHIUSO',
+                            style: const TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ]
                     )
                         : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,90 +288,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: NextBookingCountdown(nextBookingDate: _getNextBookingDate()!),
           ),
-
-        // Titolo prenotazioni
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Mie prenotazioni',
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        // Lista prenotazioni
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: _bookings.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final booking = _bookings[index];
-              final service = booking['service'] as Map<String, dynamic>?;
-              final timeSlot = booking['timeSlot'] as Map<String, dynamic>?;
-              return Card(
-                color: Colors.white70,
-                elevation: 4,
-                shadowColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Servizio: ${service?['name'] ?? 'N/A'}',
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _formatDateTime(timeSlot),
-                        style: const TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 6,
-                            shadowColor: Colors.indigo,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () => _cancelBooking(booking['id'].toString()),
-                          child: const Text(
-                            'Disdici',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Montserrat',
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
       ],
     );
   }
