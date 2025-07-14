@@ -1,5 +1,6 @@
 // lib/screens/auth/homepage.dart
 import 'package:flutter/material.dart';
+import '../coutdown.dart';
 import '/services/api.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -66,6 +67,62 @@ class _HomepageScreenState extends State<HomepageScreen> {
     }
   }
 
+  DateTime? _getNextBookingDate() {
+    final now = DateTime.now();
+    final futureBookings = _bookings.where((b) {
+      final timeSlot = b['timeSlot'] as Map<String, dynamic>?;
+      if (timeSlot == null) return false;
+      try {
+        final dateStr = timeSlot['date'] as String;
+        final timeStr = timeSlot['startTime'] as String;
+
+        final dateParts = dateStr.split('-');
+        final timeParts = timeStr.split(':');
+
+        final dt = DateTime(
+          int.parse(dateParts[0]),
+          int.parse(dateParts[1]),
+          int.parse(dateParts[2]),
+          int.parse(timeParts[0]),
+          int.parse(timeParts[1]),
+          timeParts.length > 2 ? int.parse(timeParts[2]) : 0,
+        );
+
+        return dt.isAfter(now);
+      } catch (_) {
+        return false;
+      }
+    }).toList();
+
+    if (futureBookings.isEmpty) return null;
+
+    futureBookings.sort((a, b) {
+      final aTime = a['timeSlot'];
+      final bTime = b['timeSlot'];
+
+      final dtA = DateTime.parse('${aTime['date']}T${aTime['startTime']}');
+      final dtB = DateTime.parse('${bTime['date']}T${bTime['startTime']}');
+      return dtA.compareTo(dtB);
+    });
+
+    final first = futureBookings.first['timeSlot'];
+    final dateStr = first['date'] as String;
+    final timeStr = first['startTime'] as String;
+    final dateParts = dateStr.split('-');
+    final timeParts = timeStr.split(':');
+
+    return DateTime(
+      int.parse(dateParts[0]),
+      int.parse(dateParts[1]),
+      int.parse(dateParts[2]),
+      int.parse(timeParts[0]),
+      int.parse(timeParts[1]),
+      timeParts.length > 2 ? int.parse(timeParts[2]) : 0,
+    );
+  }
+
+
+
   String _translateDay(String key) => _dayNames[key.toUpperCase()] ?? key;
 
   String _formatTime(String ts) {
@@ -120,7 +177,7 @@ class _HomepageScreenState extends State<HomepageScreen> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Orario salone',
+              'Orari del salone',
               style: const TextStyle(
                 fontFamily: 'Montserrat',
                 fontSize: 18,
@@ -131,9 +188,9 @@ class _HomepageScreenState extends State<HomepageScreen> {
         ),
         // Slider dei giorni lavorativi
         Padding(
-          padding: const EdgeInsets.only(top: 16), // stacca dall'appBar
+          padding: const EdgeInsets.only(top: 16),
           child: SizedBox(
-            height: 160, // altezza aumentata per evitare overflow
+            height: 160,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -148,11 +205,11 @@ class _HomepageScreenState extends State<HomepageScreen> {
                     color: Colors.indigo[100],
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: const [
-                      BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0,2)),
+                      BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
                     ],
                   ),
                   padding: const EdgeInsets.all(12),
-                  child: SingleChildScrollView( // consente scroll interno se overflow
+                  child: SingleChildScrollView(
                     child: closed
                         ? Center(
                       child: Text(
@@ -178,7 +235,6 @@ class _HomepageScreenState extends State<HomepageScreen> {
                             fontSize: 16,
                           ),
                         ),
-
                         const SizedBox(height: 8),
                         Text(
                           '${wd['morningOpen'] != null ? _formatTime(wd['morningOpen'] as String) : ''}'
@@ -211,6 +267,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
             ),
           ),
         ),
+
+        // Countdown prenotazione (solo se esiste)
+        if (_getNextBookingDate() != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: NextBookingCountdown(nextBookingDate: _getNextBookingDate()!),
+          ),
+
         // Titolo prenotazioni
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

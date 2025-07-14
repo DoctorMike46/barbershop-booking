@@ -26,13 +26,11 @@ public class SlotScheduler {
     public void generateSlotsAutomatically() {
         LocalDate today = LocalDate.now();
 
-        // 1. Elimina slot vecchi NON prenotati
+        // Elimina tutti gli slot dei giorni precedenti
         List<TimeSlot> oldSlots = timeSlotRepository.findAllByDateBefore(today);
-        oldSlots.stream()
-                .filter(TimeSlot::isAvailable)  // solo quelli liberi
-                .forEach(timeSlotRepository::delete);
+        timeSlotRepository.deleteAll(oldSlots);
 
-        // 2. Genera nuovi slot per i prossimi 21 giorni
+        // Genera nuovi slot per i prossimi 21 giorni
         int DAYS_AHEAD = 21;
         for (int i = 0; i < DAYS_AHEAD; i++) {
             LocalDate date = today.plusDays(i);

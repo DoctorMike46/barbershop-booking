@@ -1,4 +1,3 @@
-// lib/screens/auth/login.dart
 import 'package:barber_user_app/screens/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';

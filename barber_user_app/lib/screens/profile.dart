@@ -61,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Card(
         elevation: 4,
-        color: Colors.white70,
+        color: Colors.indigo[100],
         shadowColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
